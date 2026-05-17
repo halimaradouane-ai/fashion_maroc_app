@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Fashion Maroc{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Dashboard</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Produits</h5>
+                <p class="card-text display-4">{{ total_produits }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Produits en Alerte</h5>
+                <p class="card-text display-4">{{ produits_en_alerte }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Commandes en Cours</h5>
+                <p class="card-text display-4">{{ commandes_en_cours }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Dernières Activités</h5>
+            </div>
+            <div class="card-body">
+                {% if activities %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Référence</th>
+                            <th>Quantité</th>
+                            <th>Stock Avant</th>
+                            <th>Stock Après</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities|reverse %}
+                        <tr>
+                            <td>{{ activity.date }}</td>
+                            <td>{{ activity.type }}</td>
+                            <td>{{ activity.reference }}</td>
+                            <td>{{ activity.quantite }}</td>
+                            <td>{{ activity.ancien_stock }}</td>
+                            <td>{{ activity.nouveau_stock }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">Aucune activité récente.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

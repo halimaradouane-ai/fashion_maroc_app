@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Rapports - Fashion Maroc{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+    .stat-card {
+        transition: transform 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Rapports et Statistiques</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card stat-card bg-primary text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Valeur Totale du Stock</h5>
+                <p class="card-text display-4">{{ "{:,.2f}".format(valeur_totale_stock) }} DH</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card stat-card bg-info text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Produits</h5>
+                <p class="card-text display-4">{{ produits_en_alerte + produits_normaux }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Répartition des Produits</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="productsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">État du Stock</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="stockChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Détail des Statistiques</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Métrique</th>
+                            <th>Valeur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Valeur Totale du Stock</td>
+                            <td>{{ "{:,.2f}".format(valeur_totale_stock) }} DH</td>
+                        </tr>
+                        <tr>
+                            <td>Produits en Alerte</td>
+                            <td>{{ produits_en_alerte }}</td>
+                        </tr>
+                        <tr>
+                            <td>Produits Normaux</td>
+                            <td>{{ produits_normaux }}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Produits</td>
+                            <td>{{ produits_en_alerte + produits_normaux }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Graphique en camembert pour la répartition des produits
+    const productsCtx = document.getElementById('productsChart').getContext('2d');
+    new Chart(productsCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Produits en Alerte', 'Produits Normaux'],
+            datasets: [{
+                data: [{{ produits_en_alerte }}, {{ produits_normaux }}],
+                backgroundColor: [
+                    'rgba(220, 53, 69, 0.8)',
+                    'rgba(25, 135, 84, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(25, 135, 84, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Répartition des Produits par État'
+                }
+            }
+        }
+    });
+
+    // Graphique en barres pour l'état du stock
+    const stockCtx = document.getElementById('stockChart').getContext('2d');
+    new Chart(stockCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Produits en Alerte', 'Produits Normaux'],
+            datasets: [{
+                label: 'Nombre de Produits',
+                data: [{{ produits_en_alerte }}, {{ produits_normaux }}],
+                backgroundColor: [
+                    'rgba(220, 53, 69, 0.8)',
+                    'rgba(25, 135, 84, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(25, 135, 84, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'État du Stock'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
